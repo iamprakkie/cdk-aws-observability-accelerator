@@ -23,106 +23,107 @@ The individual patterns can be found in the `lib` directory.  Most of the patter
 
 Please refer to the AWS CDK Observability Accelertor [documentation site](https://aws-observability.github.io/cdk-aws-observability-accelerator/) for complete project documentation.
 
+Refer to following links for more details on patterns:
+
+- [Single New EKS Cluster AWS Native Observability Accelerator](https://aws-observability.github.io/cdk-aws-observability-accelerator/patterns/single-new-eks-observability-accelerators/single-new-eks-native-observability/)
+- [Single New EKS Cluster Open Source Observability Accelerator](https://aws-observability.github.io/cdk-aws-observability-accelerator/patterns/single-new-eks-observability-accelerators/single-new-eks-opensource-observability/)
+- [Single New EKS Graviton Cluster Open Source Observability Accelerator](https://aws-observability.github.io/cdk-aws-observability-accelerator/patterns/single-new-eks-observability-accelerators/single-new-eks-graviton-opensource-observability/)
+
+
 ## Usage
 Before proceeding, make sure [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) is installed on your machine.
 
 To use the eks-blueprints and patterns module, you must have [Node.js](https://nodejs.org/en/) and [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) installed. You will also use `make` to simplify build and other common actions. 
 
-### Mac Setup:
+### Setup Enviornment
 
-Follow the below steps to setup and leverage `cdk-aws-observability-accelerator` in your local Mac laptop.
+Follow the below steps to setup and leverage `cdk-aws-observability-accelerator` in your environment.
 
-1. Install `make` and `node` using brew
+1. Install `make`. For **Mac**, use brew
+    ```bash
+    brew install make
+    ```
+    For **CentOS, RHEL, Fedora**, use yum
+    ```bash
+    sudo yum install make
+    ```
 
-```
-brew install make
-brew install node
-```
+    For **Ubuntu, Debian**, use apt
+    ```bash
+    sudo apt install make
+    ```
 
-2. Install `npm`
+1. Clone `cdk-aws-observability-accelerator` repository
+    ```bash
+    git clone https://github.com/aws-observability/cdk-aws-observability-accelerator.git
+    cd cdk-aws-observability-accelerator
+    ```
+    PS: If you are contributing to this repo, please make sure to fork the repo, add your changes and create a PR against it.
 
-```
-sudo npm install -g n
-sudo n stable
-```
+1. Once you have cloned the repo, you can open it using your favourite IDE and run the below commands to install the dependencies and build the existing patterns.
+    - Install project dependencies.
+    ```bash
+    make -s deps
+    ```
+1. For **non MacOS** environments, load `nvm`
+    ```bash
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+    ```
 
-3. Make sure the following pre-requisites are met:
 
-- Node version is a current stable node version 18.x.
+1. Make sure the following pre-requisites are met:
+    - Node version is a current stable node version 18.x.
+    ```bash
+    node -v
+    v18.12.1
+    ```
 
-```bash
-$ node -v
-v20.3.1
-```
+    Update (provided Node version manager is installed): `n stable`. May require `sudo`.
+    -  NPM version must be 8.4 or above:
 
-Update (provided Node version manager is installed): `n stable`. May require `sudo`.
+    ```bash
+    npm -v
+    8.19.2
+    ```
 
--  NPM version must be 8.4 or above:
+    Updating npm: `sudo n stable` where stable can also be a specific version above 8.4. May require `sudo`.
 
-```bash
-$ npm -v
-9.7.2
-```
+1. To view patterns that are available to be deployed, execute the following:
+    ```bash
+    npm i
+    make build
+    ```
 
-Updating npm: `sudo n stable` where stable can also be a specific version above 8.4. May require `sudo`.
+1. To list the existing CDK AWS Observability accelerator patterns, execute the following:
+    ```bash
+    make list
+    ```
+    Note: Some patterns have a hard dependency on AWS Secrets (for example GitHub access tokens). Initially you will see errors complaining about lack of the required secrets. It is normal. At the bottom, it will show the list of patterns which can be deployed, in case the pattern you are looking for is not available, it is due to the hard dependency which can be fixed by following the docs specific to those patterns.
 
-4. Clone the `cdk-aws-observability-accelerator` repository
+1. To work with patterns use:
+    ```bash
+    make pattern <pattern-name> <list | deploy | synth | destroy>
+    
+    Example:
+    make pattern single-new-eks-opensource-observability list
+    
+    Patterns:
+    
+    single-new-eks-awsnative-observability
+    single-new-eks-mixed-observability
+    single-new-eks-opensource-observability
+    ```
 
-```
-git clone https://github.com/aws-observability/cdk-aws-observability-accelerator.git
-``` 
+1. Bootstrap your CDK environment.
+    ```bash
+    npx cdk bootstrap
+    ```
 
-PS: If you are contributing to this repo, please make sure to fork the repo, add your changes and create a PR against it.
-
-5. Once you have cloned the repo, you can open it using your favourite IDE and run the below commands to install the dependencies and build the existing patterns.
-
-- Install project dependencies.
-
-```
-make deps
-```
-
-- To view patterns that are available to be deployed, execute the following:
-
-```
-npm i
-make build
-```
-
-- To list the existing CDK AWS OBSERVABILITY ACCELERATOR PATTERNS
-
-```
-make list
-```
-
-Note: Some patterns have a hard dependency on AWS Secrets (for example GitHub access tokens). Initially you will see errors complaining about lack of the required secrets. It is normal. At the bottom, it will show the list of patterns which can be deployed, in case the pattern you are looking for is not available, it is due to the hard dependency which can be fixed by following the docs specific to those patterns.
-
-```
-To work with patterns use:
-	$ make pattern <pattern-name> <list | deploy | synth | destroy>
-Example:
-	$ make pattern single-new-eks-opensource-observability deploy
-
-Patterns:
-
-	single-new-eks-awsnative-observability
-	single-new-eks-cluster
-	single-new-eks-graviton-opensource-observability
-	single-new-eks-mixed-observability
-	single-new-eks-opensource-observability
-```
-
-- Bootstrap your CDK environment.
-
-```
-npx cdk bootstrap
-```
-
-- You can then deploy a specific pattern with the following:
-
-```
-make pattern single-new-eks-opensource-observability deploy
-```
+1. You can then deploy a specific pattern with the following:
+    ```bash
+    make pattern single-new-eks-opensource-observability deploy
+    ```
 
 # Developer Flow
 
