@@ -1,7 +1,14 @@
+/*
+* This construct created new EKS cluster using ObservabilityBuilder.
+* Deploys GrafanaOperatorAddon, ExternalsSecretsAddOn, ArgoCDAddOn to deploy Grafana datasources & dashboards, and other required AddOns.
+* Uses GrafanaOperatorSecretAddon to create ParameterStore ClusterSecretStore and ExternalSecret grafana-admin-credentials.
+* Creates AMG through NestedStackAddOn 
+*/
 import { Construct } from 'constructs';
 import * as blueprints from '@aws-quickstart/eks-blueprints';
 import { ObservabilityBuilder } from '../common/observability-builder';
 import { GrafanaOperatorSecretAddon } from './grafanaoperatorsecretaddon';
+import { AMGNestedStack, AMGNestedStackProps } from './AMGNestedStack';
 
 //pattern wide consts
 const GITHUB_ORG = 'aws-samples';
@@ -15,11 +22,25 @@ export default class GrafanaOperatorConstruct {
         const account = inAccount! || process.env.COA_ACCOUNT_ID! || process.env.CDK_DEFAULT_ACCOUNT!;
         const region = inRegion! || process.env.COA_AWS_REGION! || process.env.CDK_DEFAULT_REGION!;
 
-        // Argo configuration per environment
-        // const grafanaOperatorArgoAddonConfig = createArgoAddonConfig('prod', 'https://github.com/aws-samples/one-observability-demo.git','grafana-operator-manifests'); 
+        // ArgoCD configuration
         const grafanaOperatorArgoAddonConfig = createArgoAddonConfig('monitoring','https://github.com/iamprakkie/one-observability-demo.git','grafana-operator-chart');
+        // const grafanaOperatorArgoAddonConfig = createArgoAddonConfig('prod', 'https://github.com/aws-samples/one-observability-demo.git','grafana-operator-manifests'); 
         // const grafanaOperatorArgoAddonConfig = createArgoAddonConfig('dev','https://github.com/aws-samples/eks-blueprints-workloads.git','envs/dev');
         
+        // AMG Configuration
+        const AMGNestedStackProps: AMGNestedStackProps = {
+            account: account,
+            region: region
+        }
+
+        // AMG Nested Stack AddOn
+        const amgNestedStackAddOn = new blueprints.NestedStackAddOn({
+            id: 'amg-nestedstack',
+            builder: AMGNestedStack.builder(),
+        });
+
+
+
         Reflect.defineMetadata("ordered", true, blueprints.addons.GrafanaOperatorAddon); //sets metadata ordered to true for GrafanaOperatorAddon
         new blueprints.ArgoCDAddOn()
 
@@ -35,6 +56,7 @@ export default class GrafanaOperatorConstruct {
             }),
             new GrafanaOperatorSecretAddon(),
             grafanaOperatorArgoAddonConfig, // GitOps through ArgoCD
+            amgNestedStackAddOn // Creates AMG as part of Nested Stack
         ];
 
         ObservabilityBuilder.builder()
