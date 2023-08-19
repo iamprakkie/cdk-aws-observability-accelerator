@@ -48,7 +48,6 @@ export class AMGNestedStack extends NestedStack {
             resources: ['*']
         });
   
-        // workspaceRole.addToPrincipalPolicy(AMGPrometheusPolicy);
         workspaceRole.addToPolicy(AMGPrometheusPolicy);
 
         // Inline policy for SNS
