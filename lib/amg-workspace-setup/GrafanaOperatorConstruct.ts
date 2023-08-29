@@ -6,7 +6,8 @@
 */
 import { Construct } from 'constructs';
 import * as blueprints from '@aws-quickstart/eks-blueprints';
-import { ObservabilityBuilder } from '../common/observability-builder';
+// import { ObservabilityBuilder } from '../common/observability-builder';
+import { ObservabilityBuilder } from '@aws-quickstart/eks-blueprints';
 import { GrafanaOperatorSecretAddon } from './grafanaoperatorsecretaddon';
 
 export default class GrafanaOperatorConstruct {
@@ -40,7 +41,7 @@ export default class GrafanaOperatorConstruct {
         ObservabilityBuilder.builder()
             .account(account)
             .region(region)
-            .addNewClusterObservabilityBuilderAddOns()
+            .enableMixedPatternAddOns()
             .addOns(...addOns)
             .build(scope, stackId);
 

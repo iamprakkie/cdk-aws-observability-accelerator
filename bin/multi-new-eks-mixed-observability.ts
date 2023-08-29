@@ -1,5 +1,5 @@
 import { configureApp } from '../lib/common/construct-utils';
-import GrafanaOperatorConstruct from '../lib/multi-new-eks-mixed-observability-construct/GrafanaOperatorConstruct';
+import GrafanaOperatorConstruct from '../lib/amg-workspace-setup/GrafanaOperatorConstruct';
 
 const app = configureApp();
-new GrafanaOperatorConstruct(app, 'multi-new-eks-mixed');
+new GrafanaOperatorConstruct(app, 'single-new-eks-amg');
